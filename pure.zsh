@@ -155,6 +155,8 @@ prompt_pure_preprompt_render() {
 		preprompt_parts+=('%F{$prompt_pure_colors[git:stash]}${PURE_GIT_STASH_SYMBOL:-≡}%f')
 	fi
 
+	# Whether in ranger.
+	[[ -n $prompt_pure_state[ranger] ]] && preprompt_parts+=('${prompt_pure_state[ranger]}')
 	# Execution time.
 	[[ -n $prompt_pure_cmd_exec_time ]] && preprompt_parts+=('%F{$prompt_pure_colors[execution_time]}${prompt_pure_cmd_exec_time}%f')
 
@@ -693,10 +695,17 @@ prompt_pure_state_setup() {
 	# Show `username@host` if root, with username in default color.
 	[[ $UID -eq 0 ]] && username='%F{$prompt_pure_colors[user:root]}%n%f'"$hostname"
 
+	local ranger
+	# Mark prompt with ranger if it was opened from it. Copied from:
+	# https://github.com/ranger/ranger/blob/master/examples/bash_subshell_notice.sh
+	[[ -n "$RANGER_LEVEL" ]] && ranger='%F{242}(ranger)%f'
+
+
 	typeset -gA prompt_pure_state
 	prompt_pure_state[version]="1.13.0"
 	prompt_pure_state+=(
 		username "$username"
+		ranger   "$ranger"
 		prompt	 "${PURE_PROMPT_SYMBOL:-❯}"
 	)
 }
